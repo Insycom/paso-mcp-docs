@@ -1,0 +1,1761 @@
+{
+  "version_aplicacion": "0.6.1",
+  "transporte": "Streamable HTTP",
+  "ruta": "/mcp",
+  "tools": [
+    {
+      "name": "mi_cuenta",
+      "description": "Identidad autenticada, rol efectivo y tenants disponibles para esta credencial. No devuelve secretos.",
+      "inputSchema": {
+        "properties": {},
+        "title": "mi_cuentaArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "mi_cuentaDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listar_tenants",
+      "description": "Lista exclusivamente los tenants autorizados por la cuenta y la credencial, con sus licencias.",
+      "inputSchema": {
+        "properties": {},
+        "title": "listar_tenantsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "listar_tenantsDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "seleccionar_tenant",
+      "description": "Valida el tenant de trabajo y devuelve su contexto. Conservá tenant_id para las llamadas siguientes.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tenant_id"
+        ],
+        "title": "seleccionar_tenantArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "seleccionar_tenantDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "catalogo_recursos",
+      "description": "Describe campos, tipos, referencias, condiciones y recursos disponibles antes de crear o editar registros.",
+      "inputSchema": {
+        "properties": {
+          "recurso": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Recurso"
+          }
+        },
+        "title": "catalogo_recursosArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "catalogo_recursosDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listar_registros",
+      "description": "Consulta registros de un tenant con búsqueda y paginación. No mezcla información de otros tenants.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "recurso": {
+            "title": "Recurso",
+            "type": "string"
+          },
+          "buscar": {
+            "default": "",
+            "title": "Buscar",
+            "type": "string"
+          },
+          "limite": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "title": "Limite",
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Offset",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "recurso"
+        ],
+        "title": "listar_registrosArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "listar_registrosDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "obtener_registro",
+      "description": "Obtiene un registro y su versión actual dentro del tenant autorizado.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "recurso": {
+            "title": "Recurso",
+            "type": "string"
+          },
+          "id": {
+            "exclusiveMinimum": 0,
+            "title": "Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "recurso",
+          "id"
+        ],
+        "title": "obtener_registroArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "obtener_registroDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "crear_registro",
+      "description": "Crea un maestro o borrador. Consultá el catálogo; para comprobantes, pagos o stock usá las herramientas específicas.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "recurso": {
+            "title": "Recurso",
+            "type": "string"
+          },
+          "datos": {
+            "additionalProperties": true,
+            "title": "Datos",
+            "type": "object"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "recurso",
+          "datos"
+        ],
+        "title": "crear_registroArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "crear_registroDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "actualizar_registro",
+      "description": "Actualiza campos usando la versión leída. Rechaza conflictos y modificaciones de documentos bloqueados.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "recurso": {
+            "title": "Recurso",
+            "type": "string"
+          },
+          "id": {
+            "exclusiveMinimum": 0,
+            "title": "Id",
+            "type": "integer"
+          },
+          "version": {
+            "exclusiveMinimum": 0,
+            "title": "Version",
+            "type": "integer"
+          },
+          "datos": {
+            "additionalProperties": true,
+            "title": "Datos",
+            "type": "object"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "recurso",
+          "id",
+          "version",
+          "datos"
+        ],
+        "title": "actualizar_registroArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "actualizar_registroDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "archivar_registro",
+      "description": "Archiva un registro cuando sus referencias lo permiten. Requiere intención explícita del usuario.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "recurso": {
+            "title": "Recurso",
+            "type": "string"
+          },
+          "id": {
+            "exclusiveMinimum": 0,
+            "title": "Id",
+            "type": "integer"
+          },
+          "version": {
+            "exclusiveMinimum": 0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "recurso",
+          "id",
+          "version"
+        ],
+        "title": "archivar_registroArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "archivar_registroDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "consultar_informe",
+      "description": "Consulta resumen operativo, cuentas corrientes, informe mensual o historial de acciones del tenant.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "informe": {
+            "enum": [
+              "resumen",
+              "cuentas",
+              "mensual",
+              "auditoria"
+            ],
+            "title": "Informe",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "informe"
+        ],
+        "title": "consultar_informeArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "consultar_informeDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "crear_comprobante",
+      "description": "Registra FC/NC/ND interna. Contado cancela automáticamente. Reutilizá la clave solo al reintentar la misma operación.",
+      "inputSchema": {
+        "$defs": {
+          "Comprobante": {
+            "additionalProperties": false,
+            "properties": {
+              "operacion": {
+                "enum": [
+                  "venta",
+                  "compra"
+                ],
+                "title": "Operacion",
+                "type": "string"
+              },
+              "tipo": {
+                "default": "FC",
+                "enum": [
+                  "FC",
+                  "NC",
+                  "ND"
+                ],
+                "title": "Tipo",
+                "type": "string"
+              },
+              "tercero_id": {
+                "exclusiveMinimum": 0,
+                "title": "Tercero Id",
+                "type": "integer"
+              },
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "moneda_id": {
+                "exclusiveMinimum": 0,
+                "title": "Moneda Id",
+                "type": "integer"
+              },
+              "letra": {
+                "enum": [
+                  "A",
+                  "B",
+                  "C",
+                  "E"
+                ],
+                "title": "Letra",
+                "type": "string"
+              },
+              "impuesto_id": {
+                "exclusiveMinimum": 0,
+                "title": "Impuesto Id",
+                "type": "integer"
+              },
+              "condicion_id": {
+                "exclusiveMinimum": 0,
+                "title": "Condicion Id",
+                "type": "integer"
+              },
+              "cotizacion": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0.0,
+                    "maximum": 10000000.0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Cotizacion"
+              },
+              "numero_externo": {
+                "anyOf": [
+                  {
+                    "maxLength": 60,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Numero Externo"
+              },
+              "aplica_impuestos": {
+                "default": true,
+                "title": "Aplica Impuestos",
+                "type": "boolean"
+              },
+              "lineas": {
+                "items": {
+                  "$ref": "#/$defs/Linea"
+                },
+                "maxItems": 100,
+                "minItems": 1,
+                "title": "Lineas",
+                "type": "array"
+              }
+            },
+            "required": [
+              "operacion",
+              "tercero_id",
+              "fecha",
+              "moneda_id",
+              "letra",
+              "impuesto_id",
+              "condicion_id",
+              "lineas"
+            ],
+            "title": "Comprobante",
+            "type": "object"
+          },
+          "Linea": {
+            "additionalProperties": false,
+            "properties": {
+              "detalle": {
+                "maxLength": 250,
+                "minLength": 1,
+                "title": "Detalle",
+                "type": "string"
+              },
+              "cantidad": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0.0,
+                    "maximum": 1000000.0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "title": "Cantidad"
+              },
+              "precio": {
+                "anyOf": [
+                  {
+                    "maximum": 999999999.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "title": "Precio"
+              }
+            },
+            "required": [
+              "detalle",
+              "cantidad",
+              "precio"
+            ],
+            "title": "Linea",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Comprobante"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "crear_comprobanteArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "crear_comprobanteDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "registrar_pago",
+      "description": "Registra un cobro o pago con sus imputaciones. Valida saldos, tercero, moneda y duplicados.",
+      "inputSchema": {
+        "$defs": {
+          "Asignacion": {
+            "additionalProperties": false,
+            "properties": {
+              "comprobante_id": {
+                "exclusiveMinimum": 0,
+                "title": "Comprobante Id",
+                "type": "integer"
+              },
+              "importe": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0.0,
+                    "maximum": 999999999.0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "title": "Importe"
+              }
+            },
+            "required": [
+              "comprobante_id",
+              "importe"
+            ],
+            "title": "Asignacion",
+            "type": "object"
+          },
+          "Pago": {
+            "additionalProperties": false,
+            "properties": {
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "operacion": {
+                "enum": [
+                  "venta",
+                  "compra"
+                ],
+                "title": "Operacion",
+                "type": "string"
+              },
+              "moneda_id": {
+                "exclusiveMinimum": 0,
+                "title": "Moneda Id",
+                "type": "integer"
+              },
+              "medio": {
+                "default": "Transferencia",
+                "enum": [
+                  "Transferencia",
+                  "Efectivo",
+                  "Cheque",
+                  "Otro"
+                ],
+                "title": "Medio",
+                "type": "string"
+              },
+              "referencia": {
+                "default": "",
+                "maxLength": 200,
+                "title": "Referencia",
+                "type": "string"
+              },
+              "asignaciones": {
+                "items": {
+                  "$ref": "#/$defs/Asignacion"
+                },
+                "maxItems": 100,
+                "minItems": 1,
+                "title": "Asignaciones",
+                "type": "array"
+              }
+            },
+            "required": [
+              "fecha",
+              "operacion",
+              "moneda_id",
+              "asignaciones"
+            ],
+            "title": "Pago",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Pago"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "registrar_pagoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "registrar_pagoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "compensar_comprobantes",
+      "description": "Aplica una nota de crédito a una factura/nota de débito compatible sin superar el saldo disponible.",
+      "inputSchema": {
+        "$defs": {
+          "Compensacion": {
+            "additionalProperties": false,
+            "properties": {
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "credito_id": {
+                "exclusiveMinimum": 0,
+                "title": "Credito Id",
+                "type": "integer"
+              },
+              "debito_id": {
+                "exclusiveMinimum": 0,
+                "title": "Debito Id",
+                "type": "integer"
+              },
+              "importe": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0.0,
+                    "maximum": 999999999.0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "title": "Importe"
+              }
+            },
+            "required": [
+              "fecha",
+              "credito_id",
+              "debito_id",
+              "importe"
+            ],
+            "title": "Compensacion",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Compensacion"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "compensar_comprobantesArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "compensar_comprobantesDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "registrar_stock",
+      "description": "Registra entrada o salida de repuestos con su motivo. No permite stock negativo cuando se controla.",
+      "inputSchema": {
+        "$defs": {
+          "Stock": {
+            "additionalProperties": false,
+            "properties": {
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "repuesto_id": {
+                "exclusiveMinimum": 0,
+                "title": "Repuesto Id",
+                "type": "integer"
+              },
+              "cantidad": {
+                "maximum": 999999,
+                "minimum": -999999,
+                "title": "Cantidad",
+                "type": "integer"
+              },
+              "motivo": {
+                "maxLength": 250,
+                "minLength": 3,
+                "title": "Motivo",
+                "type": "string"
+              }
+            },
+            "required": [
+              "fecha",
+              "repuesto_id",
+              "cantidad",
+              "motivo"
+            ],
+            "title": "Stock",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Stock"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "registrar_stockArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "registrar_stockDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "registrar_reparacion",
+      "description": "Registra una reparación y su consumo de stock dentro de la misma transacción.",
+      "inputSchema": {
+        "$defs": {
+          "Reparacion": {
+            "additionalProperties": false,
+            "properties": {
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "equipo_id": {
+                "exclusiveMinimum": 0,
+                "title": "Equipo Id",
+                "type": "integer"
+              },
+              "repuesto_id": {
+                "exclusiveMinimum": 0,
+                "title": "Repuesto Id",
+                "type": "integer"
+              },
+              "proveedor_id": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Proveedor Id"
+              },
+              "cantidad": {
+                "exclusiveMinimum": 0,
+                "maximum": 999999,
+                "title": "Cantidad",
+                "type": "integer"
+              },
+              "costo": {
+                "anyOf": [
+                  {
+                    "maximum": 999999999.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "title": "Costo"
+              },
+              "kilometros": {
+                "default": 0,
+                "maximum": 99999999,
+                "minimum": 0,
+                "title": "Kilometros",
+                "type": "integer"
+              },
+              "detalle": {
+                "maxLength": 500,
+                "minLength": 1,
+                "title": "Detalle",
+                "type": "string"
+              }
+            },
+            "required": [
+              "fecha",
+              "equipo_id",
+              "repuesto_id",
+              "cantidad",
+              "costo",
+              "detalle"
+            ],
+            "title": "Reparacion",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Reparacion"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "registrar_reparacionArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "registrar_reparacionDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "accion_documento",
+      "description": "Confirma, factura o reabre CRT/MIC, o cierra una rendición. Conserva versión, permisos e idempotencia.",
+      "inputSchema": {
+        "$defs": {
+          "Accion": {
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "exclusiveMinimum": 0,
+                "title": "Version",
+                "type": "integer"
+              },
+              "fecha": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Fecha"
+              },
+              "cotizacion": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0.0,
+                    "maximum": 10000000.0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Cotizacion"
+              }
+            },
+            "required": [
+              "version"
+            ],
+            "title": "Accion",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "recurso": {
+            "enum": [
+              "crt",
+              "mic",
+              "rendiciones"
+            ],
+            "title": "Recurso",
+            "type": "string"
+          },
+          "id": {
+            "exclusiveMinimum": 0,
+            "title": "Id",
+            "type": "integer"
+          },
+          "accion": {
+            "enum": [
+              "confirmar",
+              "facturar",
+              "reabrir",
+              "cerrar"
+            ],
+            "title": "Accion",
+            "type": "string"
+          },
+          "datos": {
+            "$ref": "#/$defs/Accion"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "recurso",
+          "id",
+          "accion",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "accion_documentoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "accion_documentoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "agregar_crt_a_mic",
+      "description": "Agrega un CRT al MIC/DTA. Crea hoja principal o continuación consecutiva según la lógica de ARTRANS.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "mic_id": {
+            "exclusiveMinimum": 0,
+            "title": "Mic Id",
+            "type": "integer"
+          },
+          "mic_version": {
+            "exclusiveMinimum": 0,
+            "title": "Mic Version",
+            "type": "integer"
+          },
+          "crt_id": {
+            "exclusiveMinimum": 0,
+            "title": "Crt Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "mic_id",
+          "mic_version",
+          "crt_id"
+        ],
+        "title": "agregar_crt_a_micArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "agregar_crt_a_micDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "quitar_ultimo_crt_de_mic",
+      "description": "Quita únicamente la última hoja del MIC/DTA para conservar la numeración consecutiva de ARTRANS.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "mic_id": {
+            "exclusiveMinimum": 0,
+            "title": "Mic Id",
+            "type": "integer"
+          },
+          "mic_version": {
+            "exclusiveMinimum": 0,
+            "title": "Mic Version",
+            "type": "integer"
+          },
+          "hoja_id": {
+            "exclusiveMinimum": 0,
+            "title": "Hoja Id",
+            "type": "integer"
+          },
+          "hoja_version": {
+            "exclusiveMinimum": 0,
+            "title": "Hoja Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "mic_id",
+          "mic_version",
+          "hoja_id",
+          "hoja_version"
+        ],
+        "title": "quitar_ultimo_crt_de_micArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "quitar_ultimo_crt_de_micDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "anular_operacion",
+      "description": "Anula y revierte una operación cuando sus relaciones lo permiten. Requiere intención explícita del usuario.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "recurso": {
+            "enum": [
+              "comprobantes",
+              "pagos",
+              "aplicaciones",
+              "stock",
+              "reparaciones"
+            ],
+            "title": "Recurso",
+            "type": "string"
+          },
+          "id": {
+            "exclusiveMinimum": 0,
+            "title": "Id",
+            "type": "integer"
+          },
+          "version": {
+            "exclusiveMinimum": 0,
+            "title": "Version",
+            "type": "integer"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "recurso",
+          "id",
+          "version",
+          "clave_idempotencia"
+        ],
+        "title": "anular_operacionArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "anular_operacionDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "configurar_tenant",
+      "description": "Configura moneda base y datos de empresa. Exige permiso MCP de administración y rol administrador.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "moneda_base_id": {
+            "exclusiveMinimum": 0,
+            "title": "Moneda Base Id",
+            "type": "integer"
+          },
+          "sucursal": {
+            "default": 1,
+            "maximum": 9999,
+            "minimum": 1,
+            "title": "Sucursal",
+            "type": "integer"
+          },
+          "identificacion": {
+            "default": "",
+            "title": "Identificacion",
+            "type": "string"
+          },
+          "direccion": {
+            "default": "",
+            "title": "Direccion",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "moneda_base_id"
+        ],
+        "title": "configurar_tenantArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "configurar_tenantDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "listar_usuarios_tenant",
+      "description": "Lista usuarios del tenant. Exige cuenta administradora y credencial de administración.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tenant_id"
+        ],
+        "title": "listar_usuarios_tenantArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "listar_usuarios_tenantDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "administrar_listar_tenants",
+      "description": "Lista global de tenants. Solo superadministrador con credencial de administración para todos sus tenants.",
+      "inputSchema": {
+        "properties": {},
+        "title": "administrar_listar_tenantsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "administrar_listar_tenantsDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "administrar_crear_tenant",
+      "description": "Crea un tenant y su licencia inicial. Requiere superadministración global expresamente autorizada en la credencial.",
+      "inputSchema": {
+        "$defs": {
+          "NewTenant": {
+            "additionalProperties": false,
+            "properties": {
+              "nombre": {
+                "maxLength": 120,
+                "minLength": 1,
+                "title": "Nombre",
+                "type": "string"
+              },
+              "correo_admin": {
+                "maxLength": 254,
+                "title": "Correo Admin",
+                "type": "string"
+              },
+              "notas": {
+                "default": "",
+                "maxLength": 2000,
+                "title": "Notas",
+                "type": "string"
+              },
+              "mailcow": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Settings"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "meses": {
+                "default": 6,
+                "maximum": 120,
+                "minimum": 0,
+                "title": "Meses",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "nombre",
+              "correo_admin"
+            ],
+            "title": "NewTenant",
+            "type": "object"
+          },
+          "Settings": {
+            "additionalProperties": false,
+            "properties": {
+              "habilitado": {
+                "default": false,
+                "title": "Habilitado",
+                "type": "boolean"
+              },
+              "url_base": {
+                "default": "",
+                "maxLength": 500,
+                "title": "Url Base",
+                "type": "string"
+              },
+              "client_id": {
+                "default": "",
+                "maxLength": 300,
+                "title": "Client Id",
+                "type": "string"
+              },
+              "client_secret": {
+                "anyOf": [
+                  {
+                    "maxLength": 2000,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Client Secret"
+              },
+              "redirect_uri": {
+                "default": "",
+                "maxLength": 1000,
+                "title": "Redirect Uri",
+                "type": "string"
+              },
+              "dominios": {
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 100,
+                "title": "Dominios",
+                "type": "array"
+              }
+            },
+            "title": "Settings",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "datos": {
+            "$ref": "#/$defs/NewTenant"
+          }
+        },
+        "required": [
+          "datos"
+        ],
+        "title": "administrar_crear_tenantArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "administrar_crear_tenantDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "administrar_editar_tenant",
+      "description": "Edita nombre, contacto y notas de un tenant con control de versión. Solo superadministración global.",
+      "inputSchema": {
+        "$defs": {
+          "EditTenant": {
+            "additionalProperties": false,
+            "properties": {
+              "nombre": {
+                "maxLength": 120,
+                "minLength": 1,
+                "title": "Nombre",
+                "type": "string"
+              },
+              "correo_admin": {
+                "maxLength": 254,
+                "title": "Correo Admin",
+                "type": "string"
+              },
+              "notas": {
+                "default": "",
+                "maxLength": 2000,
+                "title": "Notas",
+                "type": "string"
+              },
+              "mailcow": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Settings"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "version": {
+                "exclusiveMinimum": 0,
+                "title": "Version",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "nombre",
+              "correo_admin",
+              "version"
+            ],
+            "title": "EditTenant",
+            "type": "object"
+          },
+          "Settings": {
+            "additionalProperties": false,
+            "properties": {
+              "habilitado": {
+                "default": false,
+                "title": "Habilitado",
+                "type": "boolean"
+              },
+              "url_base": {
+                "default": "",
+                "maxLength": 500,
+                "title": "Url Base",
+                "type": "string"
+              },
+              "client_id": {
+                "default": "",
+                "maxLength": 300,
+                "title": "Client Id",
+                "type": "string"
+              },
+              "client_secret": {
+                "anyOf": [
+                  {
+                    "maxLength": 2000,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Client Secret"
+              },
+              "redirect_uri": {
+                "default": "",
+                "maxLength": 1000,
+                "title": "Redirect Uri",
+                "type": "string"
+              },
+              "dominios": {
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 100,
+                "title": "Dominios",
+                "type": "array"
+              }
+            },
+            "title": "Settings",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/EditTenant"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "datos"
+        ],
+        "title": "administrar_editar_tenantArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "administrar_editar_tenantDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "administrar_licencia",
+      "description": "Asigna, renueva o reemplaza una licencia por meses. Solo superadministración global; exige versión actual.",
+      "inputSchema": {
+        "$defs": {
+          "License": {
+            "additionalProperties": false,
+            "properties": {
+              "meses": {
+                "default": 6,
+                "maximum": 120,
+                "minimum": 1,
+                "title": "Meses",
+                "type": "integer"
+              },
+              "version": {
+                "minimum": 0,
+                "title": "Version",
+                "type": "integer"
+              },
+              "modo": {
+                "default": "renovar",
+                "pattern": "^(renovar|reemplazar)$",
+                "title": "Modo",
+                "type": "string"
+              },
+              "inicio": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Inicio"
+              }
+            },
+            "required": [
+              "version"
+            ],
+            "title": "License",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/License"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "datos"
+        ],
+        "title": "administrar_licenciaArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "administrar_licenciaDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "administrar_suspension",
+      "description": "Suspende o reactiva el acceso de un tenant sin borrar datos. Solo superadministración global.",
+      "inputSchema": {
+        "$defs": {
+          "Suspension": {
+            "additionalProperties": false,
+            "properties": {
+              "suspendida": {
+                "title": "Suspendida",
+                "type": "boolean"
+              },
+              "version": {
+                "exclusiveMinimum": 0,
+                "title": "Version",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "suspendida",
+              "version"
+            ],
+            "title": "Suspension",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Suspension"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "datos"
+        ],
+        "title": "administrar_suspensionArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "administrar_suspensionDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "administrar_historial",
+      "description": "Consulta auditoría global. Solo superadministrador con credencial global de administración.",
+      "inputSchema": {
+        "properties": {},
+        "title": "administrar_historialArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "administrar_historialDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    }
+  ]
+}
