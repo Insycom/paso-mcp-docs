@@ -198,6 +198,50 @@
       }
     },
     {
+      "name": "abrir_documento_web",
+      "description": "Devuelve el enlace autenticado a la vista imprimible oficial de un CRT o MIC/DTA en PASO. No compone otro documento.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "recurso": {
+            "enum": [
+              "crt",
+              "mic"
+            ],
+            "title": "Recurso",
+            "type": "string"
+          },
+          "id": {
+            "exclusiveMinimum": 0,
+            "title": "Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "recurso",
+          "id"
+        ],
+        "title": "abrir_documento_webArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "abrir_documento_webDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
       "name": "crear_registro",
       "description": "Crea un maestro o borrador. Consultá el catálogo; para comprobantes, pagos o stock usá las herramientas específicas.",
       "inputSchema": {
@@ -1327,6 +1371,18 @@
         "destructiveHint": false,
         "idempotentHint": true,
         "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
       }
     },
     {
@@ -1347,6 +1403,734 @@
         "destructiveHint": false,
         "idempotentHint": true,
         "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "administrar_usuarios",
+      "description": "Lista usuarios globales, empresas y roles. Requiere administración global.",
+      "inputSchema": {
+        "properties": {},
+        "title": "administrar_usuariosArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "administrar_usuariosDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "administrar_crear_usuario",
+      "description": "Crea un usuario con sus roles y empresas. Requiere administración global.",
+      "inputSchema": {
+        "$defs": {
+          "NewUser": {
+            "additionalProperties": false,
+            "properties": {
+              "nombre": {
+                "maxLength": 100,
+                "minLength": 1,
+                "title": "Nombre",
+                "type": "string"
+              },
+              "correo": {
+                "default": "",
+                "maxLength": 254,
+                "title": "Correo",
+                "type": "string"
+              },
+              "rol": {
+                "pattern": "^(superadmin|admin|operador|consulta|logistica|chofer)$",
+                "title": "Rol",
+                "type": "string"
+              },
+              "empresas": {
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 100,
+                "title": "Empresas",
+                "type": "array"
+              },
+              "usuario": {
+                "pattern": "^[A-Za-z0-9_.-]{3,60}$",
+                "title": "Usuario",
+                "type": "string"
+              },
+              "password": {
+                "maxLength": 256,
+                "minLength": 12,
+                "title": "Password",
+                "type": "string"
+              }
+            },
+            "required": [
+              "nombre",
+              "rol",
+              "usuario",
+              "password"
+            ],
+            "title": "NewUser",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "datos": {
+            "$ref": "#/$defs/NewUser"
+          }
+        },
+        "required": [
+          "datos"
+        ],
+        "title": "administrar_crear_usuarioArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "administrar_crear_usuarioDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "administrar_editar_usuario",
+      "description": "Modifica el acceso global y las empresas del usuario. Requiere administración global.",
+      "inputSchema": {
+        "$defs": {
+          "EditUser": {
+            "additionalProperties": false,
+            "properties": {
+              "nombre": {
+                "maxLength": 100,
+                "minLength": 1,
+                "title": "Nombre",
+                "type": "string"
+              },
+              "correo": {
+                "default": "",
+                "maxLength": 254,
+                "title": "Correo",
+                "type": "string"
+              },
+              "rol": {
+                "pattern": "^(superadmin|admin|operador|consulta|logistica|chofer)$",
+                "title": "Rol",
+                "type": "string"
+              },
+              "empresas": {
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 100,
+                "title": "Empresas",
+                "type": "array"
+              },
+              "activo": {
+                "default": true,
+                "title": "Activo",
+                "type": "boolean"
+              },
+              "password": {
+                "anyOf": [
+                  {
+                    "maxLength": 256,
+                    "minLength": 12,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Password"
+              }
+            },
+            "required": [
+              "nombre",
+              "rol"
+            ],
+            "title": "EditUser",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "usuario_id": {
+            "exclusiveMinimum": 0,
+            "title": "Usuario Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/EditUser"
+          }
+        },
+        "required": [
+          "usuario_id",
+          "datos"
+        ],
+        "title": "administrar_editar_usuarioArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "administrar_editar_usuarioDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "administrar_desactivar_usuario",
+      "description": "Desactiva el acceso del usuario conservando su historial. Requiere administración global.",
+      "inputSchema": {
+        "properties": {
+          "usuario_id": {
+            "exclusiveMinimum": 0,
+            "title": "Usuario Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "usuario_id"
+        ],
+        "title": "administrar_desactivar_usuarioArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "administrar_desactivar_usuarioDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "administrar_consultar_correo",
+      "description": "Consulta la configuración pública de avisos SMTP. Requiere administración global.",
+      "inputSchema": {
+        "properties": {},
+        "title": "administrar_consultar_correoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "administrar_consultar_correoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "administrar_configurar_correo",
+      "description": "Actualiza la configuración de correo de plataforma. Requiere administración global.",
+      "inputSchema": {
+        "$defs": {
+          "MailSettings": {
+            "additionalProperties": false,
+            "properties": {
+              "habilitado": {
+                "default": false,
+                "title": "Habilitado",
+                "type": "boolean"
+              },
+              "host": {
+                "default": "",
+                "maxLength": 253,
+                "title": "Host",
+                "type": "string"
+              },
+              "puerto": {
+                "default": 587,
+                "maximum": 65535,
+                "minimum": 1,
+                "title": "Puerto",
+                "type": "integer"
+              },
+              "seguridad": {
+                "default": "starttls",
+                "pattern": "^(starttls|tls)$",
+                "title": "Seguridad",
+                "type": "string"
+              },
+              "usuario": {
+                "default": "",
+                "maxLength": 254,
+                "title": "Usuario",
+                "type": "string"
+              },
+              "password": {
+                "anyOf": [
+                  {
+                    "maxLength": 1000,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Password"
+              },
+              "remitente": {
+                "default": "",
+                "maxLength": 254,
+                "title": "Remitente",
+                "type": "string"
+              },
+              "nombre": {
+                "default": "PASO",
+                "maxLength": 120,
+                "minLength": 1,
+                "title": "Nombre",
+                "type": "string"
+              }
+            },
+            "title": "MailSettings",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "datos": {
+            "$ref": "#/$defs/MailSettings"
+          }
+        },
+        "required": [
+          "datos"
+        ],
+        "title": "administrar_configurar_correoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "administrar_configurar_correoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "administrar_probar_correo",
+      "description": "Envía un mensaje de prueba al destinatario indicado. Requiere administración global.",
+      "inputSchema": {
+        "$defs": {
+          "MailTest": {
+            "additionalProperties": false,
+            "properties": {
+              "destinatario": {
+                "maxLength": 254,
+                "title": "Destinatario",
+                "type": "string"
+              }
+            },
+            "required": [
+              "destinatario"
+            ],
+            "title": "MailTest",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "datos": {
+            "$ref": "#/$defs/MailTest"
+          }
+        },
+        "required": [
+          "datos"
+        ],
+        "title": "administrar_probar_correoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "administrar_probar_correoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "administrar_avisos",
+      "description": "Consulta los últimos avisos enviados o pendientes. Requiere administración global.",
+      "inputSchema": {
+        "properties": {},
+        "title": "administrar_avisosArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "administrar_avisosDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "administrar_catalogo_modulos",
+      "description": "Consulta el catálogo general de módulos. Requiere administración global.",
+      "inputSchema": {
+        "properties": {},
+        "title": "administrar_catalogo_modulosArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "administrar_catalogo_modulosDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "administrar_rol_usuario",
+      "description": "Actualiza el rol del usuario en el tenant con control de versión. Requiere administración global.",
+      "inputSchema": {
+        "$defs": {
+          "TenantRole": {
+            "additionalProperties": false,
+            "properties": {
+              "rol": {
+                "maxLength": 80,
+                "minLength": 1,
+                "title": "Rol",
+                "type": "string"
+              },
+              "version": {
+                "minimum": 0,
+                "title": "Version",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "rol",
+              "version"
+            ],
+            "title": "TenantRole",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "usuario_id": {
+            "exclusiveMinimum": 0,
+            "title": "Usuario Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/TenantRole"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "usuario_id",
+          "datos"
+        ],
+        "title": "administrar_rol_usuarioArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "administrar_rol_usuarioDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "administrar_modulos_tenant",
+      "description": "Consulta habilitación y versión de los módulos del tenant.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tenant_id"
+        ],
+        "title": "administrar_modulos_tenantArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "administrar_modulos_tenantDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "administrar_habilitacion_modulo",
+      "description": "Habilita o pausa un módulo para el tenant seleccionado. Requiere administración global.",
+      "inputSchema": {
+        "$defs": {
+          "ModuleSetting": {
+            "additionalProperties": false,
+            "properties": {
+              "enabled": {
+                "title": "Enabled",
+                "type": "boolean"
+              },
+              "version": {
+                "minimum": 0,
+                "title": "Version",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "enabled",
+              "version"
+            ],
+            "title": "ModuleSetting",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "modulo": {
+            "pattern": "^[a-z][a-z0-9_]{0,63}$",
+            "title": "Modulo",
+            "type": "string"
+          },
+          "datos": {
+            "$ref": "#/$defs/ModuleSetting"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "modulo",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "administrar_habilitacion_moduloArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "administrar_habilitacion_moduloDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
       }
     },
     {
@@ -1473,6 +2257,18 @@
         "destructiveHint": false,
         "idempotentHint": false,
         "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
       }
     },
     {
@@ -1604,6 +2400,18 @@
         "destructiveHint": true,
         "idempotentHint": false,
         "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
       }
     },
     {
@@ -1680,6 +2488,18 @@
         "destructiveHint": true,
         "idempotentHint": false,
         "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
       }
     },
     {
@@ -1735,6 +2555,18 @@
         "destructiveHint": true,
         "idempotentHint": false,
         "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
       }
     },
     {
@@ -1748,6 +2580,4390 @@
       "outputSchema": {
         "additionalProperties": true,
         "title": "administrar_historialDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "ingresar_cubierta",
+      "description": "Ingresa una cubierta individual al depósito.",
+      "inputSchema": {
+        "$defs": {
+          "Alta": {
+            "additionalProperties": false,
+            "properties": {
+              "precio": {
+                "anyOf": [
+                  {
+                    "maximum": 999999999.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Precio"
+              },
+              "mano_de_obra": {
+                "anyOf": [
+                  {
+                    "maximum": 999999999.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Mano De Obra"
+              },
+              "moneda_id": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Moneda Id"
+              },
+              "dot": {
+                "anyOf": [
+                  {
+                    "maxLength": 40,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Dot"
+              },
+              "numero": {
+                "default": "",
+                "maxLength": 80,
+                "title": "Numero",
+                "type": "string"
+              },
+              "marca": {
+                "maxLength": 80,
+                "title": "Marca",
+                "type": "string"
+              },
+              "rodado": {
+                "maxLength": 80,
+                "title": "Rodado",
+                "type": "string"
+              },
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "banda": {
+                "anyOf": [
+                  {
+                    "maximum": 100,
+                    "minimum": 0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Banda"
+              },
+              "recapados": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Recapados"
+              }
+            },
+            "required": [
+              "marca",
+              "rodado",
+              "fecha"
+            ],
+            "title": "Alta",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Alta"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "ingresar_cubiertaArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "ingresar_cubiertaDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "mover_cubierta",
+      "description": "Registra un movimiento o medición con versión de la cubierta.",
+      "inputSchema": {
+        "$defs": {
+          "Movimiento": {
+            "additionalProperties": false,
+            "properties": {
+              "precio": {
+                "anyOf": [
+                  {
+                    "maximum": 999999999.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Precio"
+              },
+              "mano_de_obra": {
+                "anyOf": [
+                  {
+                    "maximum": 999999999.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Mano De Obra"
+              },
+              "moneda_id": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Moneda Id"
+              },
+              "dot": {
+                "anyOf": [
+                  {
+                    "maxLength": 40,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Dot"
+              },
+              "accion": {
+                "enum": [
+                  "montar",
+                  "retirar",
+                  "medir",
+                  "enviar",
+                  "retornar",
+                  "rechazar",
+                  "baja",
+                  "disponer"
+                ],
+                "title": "Accion",
+                "type": "string"
+              },
+              "version": {
+                "exclusiveMinimum": 0,
+                "title": "Version",
+                "type": "integer"
+              },
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "equipo_id": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Equipo Id"
+              },
+              "posicion": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Posicion"
+              },
+              "proveedor_id": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Proveedor Id"
+              },
+              "km": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Km"
+              },
+              "banda": {
+                "anyOf": [
+                  {
+                    "maximum": 100,
+                    "minimum": 0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Banda"
+              },
+              "recapado": {
+                "default": false,
+                "title": "Recapado",
+                "type": "boolean"
+              },
+              "documento": {
+                "default": "",
+                "maxLength": 120,
+                "title": "Documento",
+                "type": "string"
+              },
+              "motivo": {
+                "default": "",
+                "maxLength": 500,
+                "title": "Motivo",
+                "type": "string"
+              }
+            },
+            "required": [
+              "accion",
+              "version",
+              "fecha"
+            ],
+            "title": "Movimiento",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "id": {
+            "exclusiveMinimum": 0,
+            "title": "Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Movimiento"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "id",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "mover_cubiertaArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "mover_cubiertaDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "consultar_cubiertas",
+      "description": "Consulta la posición, el estado y la versión de cada cubierta desde el último ID.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "desde": {
+            "default": 0,
+            "title": "Desde",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tenant_id"
+        ],
+        "title": "consultar_cubiertasArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "consultar_cubiertasDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "consultar_conexiones_telematicas",
+      "description": "Consulta recursos configurados, estado, cursor y reintentos del tenant.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tenant_id"
+        ],
+        "title": "consultar_conexiones_telematicasArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "consultar_conexiones_telematicasDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "configurar_sincronizacion_rfms",
+      "description": "Habilita o pausa un recurso contractual rFMS. Requiere administración del tenant.",
+      "inputSchema": {
+        "$defs": {
+          "Toggle": {
+            "additionalProperties": false,
+            "properties": {
+              "enabled": {
+                "title": "Enabled",
+                "type": "boolean"
+              },
+              "version": {
+                "minimum": 0,
+                "title": "Version",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "enabled",
+              "version"
+            ],
+            "title": "Toggle",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "proveedor": {
+            "enum": [
+              "scania",
+              "volvo",
+              "fleetboard"
+            ],
+            "title": "Proveedor",
+            "type": "string"
+          },
+          "recurso": {
+            "pattern": "^[A-Za-z][A-Za-z0-9_]{0,79}$",
+            "title": "Recurso",
+            "type": "string"
+          },
+          "datos": {
+            "$ref": "#/$defs/Toggle"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "proveedor",
+          "recurso",
+          "datos"
+        ],
+        "title": "configurar_sincronizacion_rfmsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "configurar_sincronizacion_rfmsDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "configurar_sincronizacion_fleetboard",
+      "description": "Habilita o pausa un recurso SOAP del perfil Fleetboard contratado para el tenant.",
+      "inputSchema": {
+        "$defs": {
+          "Toggle": {
+            "additionalProperties": false,
+            "properties": {
+              "enabled": {
+                "title": "Enabled",
+                "type": "boolean"
+              },
+              "version": {
+                "minimum": 0,
+                "title": "Version",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "enabled",
+              "version"
+            ],
+            "title": "Toggle",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "recurso": {
+            "pattern": "^[A-Za-z][A-Za-z0-9_]{0,79}$",
+            "title": "Recurso",
+            "type": "string"
+          },
+          "datos": {
+            "$ref": "#/$defs/Toggle"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "recurso",
+          "datos"
+        ],
+        "title": "configurar_sincronizacion_fleetboardArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "configurar_sincronizacion_fleetboardDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "consultar_historial_conciliado",
+      "description": "Consulta evidencia, identidad, procedencia y decisión de las filas aplicadas.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "busqueda": {
+            "default": "",
+            "title": "Busqueda",
+            "type": "string"
+          },
+          "cursor": {
+            "default": 0,
+            "title": "Cursor",
+            "type": "integer"
+          },
+          "lote": {
+            "default": "",
+            "title": "Lote",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id"
+        ],
+        "title": "consultar_historial_conciliadoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "consultar_historial_conciliadoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "consultar_costos_mantenimiento",
+      "description": "Agrupa costos por origen y moneda para el período solicitado.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "desde": {
+            "format": "date",
+            "title": "Desde",
+            "type": "string"
+          },
+          "hasta": {
+            "format": "date",
+            "title": "Hasta",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "desde",
+          "hasta"
+        ],
+        "title": "consultar_costos_mantenimientoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "consultar_costos_mantenimientoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "conciliar_vin",
+      "description": "Vincula un VIN observado a un equipo del mismo tenant.",
+      "inputSchema": {
+        "$defs": {
+          "Match": {
+            "additionalProperties": false,
+            "properties": {
+              "vigente_desde": {
+                "format": "date-time",
+                "title": "Vigente Desde",
+                "type": "string"
+              },
+              "equipo_id": {
+                "exclusiveMinimum": 0,
+                "title": "Equipo Id",
+                "type": "integer"
+              },
+              "version": {
+                "minimum": 0,
+                "title": "Version",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "vigente_desde",
+              "equipo_id",
+              "version"
+            ],
+            "title": "Match",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "proveedor": {
+            "enum": [
+              "scania",
+              "volvo",
+              "fleetboard"
+            ],
+            "title": "Proveedor",
+            "type": "string"
+          },
+          "vin": {
+            "pattern": "^[A-HJ-NPR-Z0-9]{17}$",
+            "title": "Vin",
+            "type": "string"
+          },
+          "datos": {
+            "$ref": "#/$defs/Match"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "proveedor",
+          "vin",
+          "datos"
+        ],
+        "title": "conciliar_vinArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "conciliar_vinDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "consumo_por_periodo",
+      "description": "Calcula consumo con distancia e intervalos válidos para un VIN y proveedor.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "proveedor": {
+            "enum": [
+              "scania",
+              "volvo",
+              "fleetboard"
+            ],
+            "title": "Proveedor",
+            "type": "string"
+          },
+          "vin": {
+            "pattern": "^[A-HJ-NPR-Z0-9]{17}$",
+            "title": "Vin",
+            "type": "string"
+          },
+          "desde": {
+            "format": "date-time",
+            "title": "Desde",
+            "type": "string"
+          },
+          "hasta": {
+            "format": "date-time",
+            "title": "Hasta",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "proveedor",
+          "vin",
+          "desde",
+          "hasta"
+        ],
+        "title": "consumo_por_periodoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "consumo_por_periodoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "abrir_orden_taller",
+      "description": "Abre una OT y reserva los repuestos disponibles.",
+      "inputSchema": {
+        "$defs": {
+          "Linea": {
+            "additionalProperties": false,
+            "properties": {
+              "repuesto_id": {
+                "exclusiveMinimum": 0,
+                "title": "Repuesto Id",
+                "type": "integer"
+              },
+              "cantidad": {
+                "exclusiveMinimum": 0,
+                "maximum": 999999,
+                "title": "Cantidad",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "repuesto_id",
+              "cantidad"
+            ],
+            "title": "Linea",
+            "type": "object"
+          },
+          "Orden": {
+            "additionalProperties": false,
+            "properties": {
+              "equipo_id": {
+                "exclusiveMinimum": 0,
+                "title": "Equipo Id",
+                "type": "integer"
+              },
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "detalle": {
+                "maxLength": 500,
+                "minLength": 1,
+                "title": "Detalle",
+                "type": "string"
+              },
+              "prioridad": {
+                "default": "P2",
+                "enum": [
+                  "P1",
+                  "P2",
+                  "P3"
+                ],
+                "title": "Prioridad",
+                "type": "string"
+              },
+              "origen": {
+                "default": "manual",
+                "enum": [
+                  "manual",
+                  "auxilio"
+                ],
+                "title": "Origen",
+                "type": "string"
+              },
+              "repuestos": {
+                "items": {
+                  "$ref": "#/$defs/Linea"
+                },
+                "maxItems": 100,
+                "title": "Repuestos",
+                "type": "array"
+              }
+            },
+            "required": [
+              "equipo_id",
+              "fecha",
+              "detalle"
+            ],
+            "title": "Orden",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Orden"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "abrir_orden_tallerArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "abrir_orden_tallerDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "actualizar_orden_taller",
+      "description": "Registra atención, cierre o anulación de OT.",
+      "inputSchema": {
+        "$defs": {
+          "Estado": {
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "exclusiveMinimum": 0,
+                "title": "Version",
+                "type": "integer"
+              },
+              "estado": {
+                "enum": [
+                  "en_transito",
+                  "en_atencion",
+                  "cerrada",
+                  "anulada"
+                ],
+                "title": "Estado",
+                "type": "string"
+              },
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "km": {
+                "anyOf": [
+                  {
+                    "maximum": 99999999,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Km"
+              },
+              "costos_por_repuesto": {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "maximum": 999999999.0,
+                      "minimum": 0.0,
+                      "type": "number"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                },
+                "title": "Costos Por Repuesto",
+                "type": "object"
+              }
+            },
+            "required": [
+              "version",
+              "estado",
+              "fecha"
+            ],
+            "title": "Estado",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "ident": {
+            "exclusiveMinimum": 0,
+            "title": "Ident",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Estado"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "ident",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "actualizar_orden_tallerArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "actualizar_orden_tallerDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cotizar_compra_taller",
+      "description": "Registra una oferta comparable de proveedor.",
+      "inputSchema": {
+        "$defs": {
+          "Oferta": {
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "exclusiveMinimum": 0,
+                "title": "Version",
+                "type": "integer"
+              },
+              "proveedor_id": {
+                "exclusiveMinimum": 0,
+                "title": "Proveedor Id",
+                "type": "integer"
+              },
+              "moneda_id": {
+                "exclusiveMinimum": 0,
+                "title": "Moneda Id",
+                "type": "integer"
+              },
+              "precio_unitario_con_impuestos": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0.0,
+                    "maximum": 999999999.0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "title": "Precio Unitario Con Impuestos"
+              },
+              "plazo_dias": {
+                "maximum": 3650,
+                "minimum": 0,
+                "title": "Plazo Dias",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "version",
+              "proveedor_id",
+              "moneda_id",
+              "precio_unitario_con_impuestos",
+              "plazo_dias"
+            ],
+            "title": "Oferta",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "ident": {
+            "exclusiveMinimum": 0,
+            "title": "Ident",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Oferta"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "ident",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "cotizar_compra_tallerArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "cotizar_compra_tallerDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "aprobar_compra_taller",
+      "description": "Aprueba una oferta con al menos tres proveedores.",
+      "inputSchema": {
+        "$defs": {
+          "Aprobacion": {
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "exclusiveMinimum": 0,
+                "title": "Version",
+                "type": "integer"
+              },
+              "proveedor_id": {
+                "exclusiveMinimum": 0,
+                "title": "Proveedor Id",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "version",
+              "proveedor_id"
+            ],
+            "title": "Aprobacion",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "ident": {
+            "exclusiveMinimum": 0,
+            "title": "Ident",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Aprobacion"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "ident",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "aprobar_compra_tallerArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "aprobar_compra_tallerDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "recibir_compra_taller",
+      "description": "Recibe un remito y reserva el material de la OT.",
+      "inputSchema": {
+        "$defs": {
+          "Recepcion": {
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "exclusiveMinimum": 0,
+                "title": "Version",
+                "type": "integer"
+              },
+              "cantidad": {
+                "exclusiveMinimum": 0,
+                "maximum": 999999,
+                "title": "Cantidad",
+                "type": "integer"
+              },
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "remito": {
+                "maxLength": 100,
+                "minLength": 1,
+                "title": "Remito",
+                "type": "string"
+              }
+            },
+            "required": [
+              "version",
+              "cantidad",
+              "fecha",
+              "remito"
+            ],
+            "title": "Recepcion",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "ident": {
+            "exclusiveMinimum": 0,
+            "title": "Ident",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Recepcion"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "ident",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "recibir_compra_tallerArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "recibir_compra_tallerDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "registrar_lectura_tablero",
+      "description": "Registra lectura manual visible, con confirmación explícita de vuelta del contador.",
+      "inputSchema": {
+        "$defs": {
+          "Lectura": {
+            "additionalProperties": false,
+            "properties": {
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "visible": {
+                "exclusiveMaximum": 1000000,
+                "minimum": 0,
+                "title": "Visible",
+                "type": "integer"
+              },
+              "reinicio_confirmado": {
+                "default": false,
+                "title": "Reinicio Confirmado",
+                "type": "boolean"
+              },
+              "acumulado_inicial": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Acumulado Inicial"
+              },
+              "version": {
+                "minimum": 0,
+                "title": "Version",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "fecha",
+              "visible",
+              "version"
+            ],
+            "title": "Lectura",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "ident": {
+            "exclusiveMinimum": 0,
+            "title": "Ident",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Lectura"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "ident",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "registrar_lectura_tableroArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "registrar_lectura_tableroDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "relevar_urea",
+      "description": "Registra clasificación observada y fecha del relevamiento.",
+      "inputSchema": {
+        "$defs": {
+          "Urea": {
+            "additionalProperties": false,
+            "properties": {
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "clasificacion": {
+                "enum": [
+                  "A",
+                  "N",
+                  "C",
+                  "S"
+                ],
+                "title": "Clasificacion",
+                "type": "string"
+              },
+              "nota": {
+                "default": "",
+                "maxLength": 500,
+                "title": "Nota",
+                "type": "string"
+              }
+            },
+            "required": [
+              "fecha",
+              "clasificacion"
+            ],
+            "title": "Urea",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "ident": {
+            "exclusiveMinimum": 0,
+            "title": "Ident",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Urea"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "ident",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "relevar_ureaArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "relevar_ureaDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "registrar_servicio_preventivo",
+      "description": "Registra el servicio de un ítem de la unidad.",
+      "inputSchema": {
+        "$defs": {
+          "Servicio": {
+            "additionalProperties": false,
+            "properties": {
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "item": {
+                "maxLength": 80,
+                "minLength": 1,
+                "title": "Item",
+                "type": "string"
+              },
+              "km": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Km"
+              },
+              "estimado": {
+                "default": false,
+                "title": "Estimado",
+                "type": "boolean"
+              },
+              "comprobante": {
+                "default": "",
+                "maxLength": 150,
+                "title": "Comprobante",
+                "type": "string"
+              },
+              "proveedor_id": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Proveedor Id"
+              }
+            },
+            "required": [
+              "fecha",
+              "item"
+            ],
+            "title": "Servicio",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "ident": {
+            "exclusiveMinimum": 0,
+            "title": "Ident",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Servicio"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "ident",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "registrar_servicio_preventivoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "registrar_servicio_preventivoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "configurar_plan_preventivo",
+      "description": "Registra la política y los intervalos de una tarea preventiva.",
+      "inputSchema": {
+        "$defs": {
+          "Plan": {
+            "additionalProperties": false,
+            "properties": {
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "item": {
+                "maxLength": 80,
+                "minLength": 1,
+                "title": "Item",
+                "type": "string"
+              },
+              "politica": {
+                "enum": [
+                  "matriz",
+                  "general",
+                  "scania",
+                  "mercedes"
+                ],
+                "title": "Politica",
+                "type": "string"
+              },
+              "intervalo_km": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Intervalo Km"
+              },
+              "intervalo_dias": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Intervalo Dias"
+              }
+            },
+            "required": [
+              "fecha",
+              "item",
+              "politica"
+            ],
+            "title": "Plan",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "ident": {
+            "exclusiveMinimum": 0,
+            "title": "Ident",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Plan"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "ident",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "configurar_plan_preventivoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "configurar_plan_preventivoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "actualizar_acople",
+      "description": "Abre o termina el acople entre equipos existentes.",
+      "inputSchema": {
+        "$defs": {
+          "Acople": {
+            "additionalProperties": false,
+            "properties": {
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "semi_id": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Semi Id"
+              },
+              "acople_anterior_id": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Acople Anterior Id"
+              }
+            },
+            "required": [
+              "fecha"
+            ],
+            "title": "Acople",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "ident": {
+            "exclusiveMinimum": 0,
+            "title": "Ident",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Acople"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "ident",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "actualizar_acopleArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "actualizar_acopleDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "publicar_plantilla_diaria",
+      "description": "Publica una nueva versión de plantilla diaria.",
+      "inputSchema": {
+        "$defs": {
+          "Plantilla": {
+            "additionalProperties": false,
+            "properties": {
+              "nombre": {
+                "maxLength": 150,
+                "minLength": 1,
+                "title": "Nombre",
+                "type": "string"
+              },
+              "version_anterior": {
+                "minimum": 0,
+                "title": "Version Anterior",
+                "type": "integer"
+              },
+              "secciones": {
+                "additionalProperties": {
+                  "items": {
+                    "maxLength": 150,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "maxProperties": 100,
+                "minProperties": 1,
+                "propertyNames": {
+                  "maxLength": 150,
+                  "minLength": 1
+                },
+                "title": "Secciones",
+                "type": "object"
+              }
+            },
+            "required": [
+              "nombre",
+              "version_anterior",
+              "secciones"
+            ],
+            "title": "Plantilla",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Plantilla"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "publicar_plantilla_diariaArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "publicar_plantilla_diariaDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "registrar_checklist_diario",
+      "description": "Registra el control detallado de una plantilla y abre sus fallas.",
+      "inputSchema": {
+        "$defs": {
+          "Diario": {
+            "additionalProperties": false,
+            "properties": {
+              "equipo_id": {
+                "exclusiveMinimum": 0,
+                "title": "Equipo Id",
+                "type": "integer"
+              },
+              "chofer_id": {
+                "exclusiveMinimum": 0,
+                "title": "Chofer Id",
+                "type": "integer"
+              },
+              "plantilla_id": {
+                "exclusiveMinimum": 0,
+                "title": "Plantilla Id",
+                "type": "integer"
+              },
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "hora": {
+                "format": "time",
+                "title": "Hora",
+                "type": "string"
+              },
+              "km": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Km"
+              },
+              "lugar": {
+                "maxLength": 150,
+                "minLength": 1,
+                "title": "Lugar",
+                "type": "string"
+              },
+              "destino": {
+                "maxLength": 150,
+                "minLength": 1,
+                "title": "Destino",
+                "type": "string"
+              },
+              "respuestas": {
+                "additionalProperties": {
+                  "additionalProperties": {
+                    "$ref": "#/$defs/ItemDiario"
+                  },
+                  "propertyNames": {
+                    "maxLength": 150,
+                    "minLength": 1
+                  },
+                  "type": "object"
+                },
+                "propertyNames": {
+                  "maxLength": 150,
+                  "minLength": 1
+                },
+                "title": "Respuestas",
+                "type": "object"
+              }
+            },
+            "required": [
+              "equipo_id",
+              "chofer_id",
+              "plantilla_id",
+              "fecha",
+              "hora",
+              "lugar",
+              "destino",
+              "respuestas"
+            ],
+            "title": "Diario",
+            "type": "object"
+          },
+          "ItemDiario": {
+            "additionalProperties": false,
+            "properties": {
+              "estado": {
+                "enum": [
+                  "B",
+                  "R",
+                  "M"
+                ],
+                "title": "Estado",
+                "type": "string"
+              },
+              "prioridad": {
+                "default": "N",
+                "enum": [
+                  "N",
+                  "U"
+                ],
+                "title": "Prioridad",
+                "type": "string"
+              },
+              "observacion": {
+                "default": "",
+                "maxLength": 500,
+                "title": "Observacion",
+                "type": "string"
+              }
+            },
+            "required": [
+              "estado"
+            ],
+            "title": "ItemDiario",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Diario"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "registrar_checklist_diarioArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "registrar_checklist_diarioDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "registrar_checklist_porteria",
+      "description": "Registra ingreso, egreso o taller, con autorización de egreso y OT por incumplimiento.",
+      "inputSchema": {
+        "$defs": {
+          "ItemPorteria": {
+            "additionalProperties": false,
+            "properties": {
+              "estado": {
+                "enum": [
+                  "conforme",
+                  "no_conforme",
+                  "requiere_cambio",
+                  "ausente"
+                ],
+                "title": "Estado",
+                "type": "string"
+              },
+              "observacion": {
+                "default": "",
+                "maxLength": 500,
+                "title": "Observacion",
+                "type": "string"
+              },
+              "repuesto_id": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Repuesto Id"
+              }
+            },
+            "required": [
+              "estado"
+            ],
+            "title": "ItemPorteria",
+            "type": "object"
+          },
+          "Porteria": {
+            "additionalProperties": false,
+            "properties": {
+              "equipo_id": {
+                "exclusiveMinimum": 0,
+                "title": "Equipo Id",
+                "type": "integer"
+              },
+              "chofer_id": {
+                "exclusiveMinimum": 0,
+                "title": "Chofer Id",
+                "type": "integer"
+              },
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "circuito": {
+                "enum": [
+                  "ingreso",
+                  "egreso",
+                  "taller"
+                ],
+                "title": "Circuito",
+                "type": "string"
+              },
+              "km": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Km"
+              },
+              "tecnico": {
+                "maxLength": 150,
+                "minLength": 1,
+                "title": "Tecnico",
+                "type": "string"
+              },
+              "respuestas": {
+                "additionalProperties": {
+                  "$ref": "#/$defs/ItemPorteria"
+                },
+                "propertyNames": {
+                  "maxLength": 150,
+                  "minLength": 1
+                },
+                "title": "Respuestas",
+                "type": "object"
+              }
+            },
+            "required": [
+              "equipo_id",
+              "chofer_id",
+              "fecha",
+              "circuito",
+              "tecnico",
+              "respuestas"
+            ],
+            "title": "Porteria",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Porteria"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "registrar_checklist_porteriaArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "registrar_checklist_porteriaDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cerrar_falla_diaria",
+      "description": "Registra acción, responsable y fecha de cierre de una falla.",
+      "inputSchema": {
+        "$defs": {
+          "Cierre": {
+            "additionalProperties": false,
+            "properties": {
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "accion": {
+                "maxLength": 150,
+                "minLength": 1,
+                "title": "Accion",
+                "type": "string"
+              },
+              "responsable": {
+                "maxLength": 150,
+                "minLength": 1,
+                "title": "Responsable",
+                "type": "string"
+              },
+              "orden_id": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Orden Id"
+              }
+            },
+            "required": [
+              "fecha",
+              "accion",
+              "responsable"
+            ],
+            "title": "Cierre",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "ident": {
+            "exclusiveMinimum": 0,
+            "title": "Ident",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Cierre"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "ident",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "cerrar_falla_diariaArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "cerrar_falla_diariaDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "crear_elemento_inventario",
+      "description": "Crea un elemento fungible o una pieza con serie.",
+      "inputSchema": {
+        "$defs": {
+          "Elemento": {
+            "additionalProperties": false,
+            "properties": {
+              "descripcion": {
+                "maxLength": 120,
+                "minLength": 1,
+                "title": "Descripcion",
+                "type": "string"
+              },
+              "serie": {
+                "default": "",
+                "maxLength": 100,
+                "title": "Serie",
+                "type": "string"
+              },
+              "vencimiento": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Vencimiento"
+              },
+              "estandar": {
+                "default": 0,
+                "minimum": 0,
+                "title": "Estandar",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "descripcion"
+            ],
+            "title": "Elemento",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Elemento"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "crear_elemento_inventarioArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "crear_elemento_inventarioDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "registrar_movimiento_inventario",
+      "description": "Registra transferencia, préstamo, devolución, recepción, pérdida o conteo.",
+      "inputSchema": {
+        "$defs": {
+          "Operacion": {
+            "additionalProperties": false,
+            "properties": {
+              "tipo": {
+                "enum": [
+                  "recepcion",
+                  "transferencia",
+                  "prestamo",
+                  "devolucion",
+                  "perdida",
+                  "conteo"
+                ],
+                "title": "Tipo",
+                "type": "string"
+              },
+              "item_id": {
+                "exclusiveMinimum": 0,
+                "title": "Item Id",
+                "type": "integer"
+              },
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "origen_equipo_id": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Origen Equipo Id"
+              },
+              "destino_equipo_id": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Destino Equipo Id"
+              },
+              "persona_id": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Persona Id"
+              },
+              "prestamo_id": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Prestamo Id"
+              },
+              "cantidad": {
+                "maximum": 999999,
+                "minimum": 0,
+                "title": "Cantidad",
+                "type": "integer"
+              },
+              "version_conteo": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Version Conteo"
+              },
+              "motivo": {
+                "maxLength": 500,
+                "minLength": 1,
+                "title": "Motivo",
+                "type": "string"
+              },
+              "documento": {
+                "default": "",
+                "maxLength": 120,
+                "title": "Documento",
+                "type": "string"
+              }
+            },
+            "required": [
+              "tipo",
+              "item_id",
+              "fecha",
+              "cantidad",
+              "motivo"
+            ],
+            "title": "Operacion",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Operacion"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "registrar_movimiento_inventarioArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "registrar_movimiento_inventarioDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "justificar_diferencia_inventario",
+      "description": "Registra la causa y el acta de una diferencia de inventario.",
+      "inputSchema": {
+        "$defs": {
+          "Justificacion": {
+            "additionalProperties": false,
+            "properties": {
+              "causa": {
+                "enum": [
+                  "perdida",
+                  "robo",
+                  "desgaste",
+                  "rotura",
+                  "prestamo_no_registrado",
+                  "error_de_carga"
+                ],
+                "title": "Causa",
+                "type": "string"
+              },
+              "acta": {
+                "maxLength": 120,
+                "title": "Acta",
+                "type": "string"
+              },
+              "observacion": {
+                "maxLength": 500,
+                "minLength": 1,
+                "title": "Observacion",
+                "type": "string"
+              }
+            },
+            "required": [
+              "causa",
+              "acta",
+              "observacion"
+            ],
+            "title": "Justificacion",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "ident": {
+            "exclusiveMinimum": 0,
+            "title": "Ident",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Justificacion"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "ident",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "justificar_diferencia_inventarioArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "justificar_diferencia_inventarioDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "rotar_cubiertas",
+      "description": "Permuta dos montajes vigentes en una transacción.",
+      "inputSchema": {
+        "$defs": {
+          "Permuta": {
+            "additionalProperties": false,
+            "properties": {
+              "primera": {
+                "$ref": "#/$defs/Pieza"
+              },
+              "segunda": {
+                "$ref": "#/$defs/Pieza"
+              },
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "km_primera": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Km Primera"
+              },
+              "km_segunda": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Km Segunda"
+              },
+              "motivo": {
+                "maxLength": 500,
+                "minLength": 1,
+                "title": "Motivo",
+                "type": "string"
+              }
+            },
+            "required": [
+              "primera",
+              "segunda",
+              "fecha",
+              "motivo"
+            ],
+            "title": "Permuta",
+            "type": "object"
+          },
+          "Pieza": {
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "exclusiveMinimum": 0,
+                "title": "Id",
+                "type": "integer"
+              },
+              "version": {
+                "exclusiveMinimum": 0,
+                "title": "Version",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id",
+              "version"
+            ],
+            "title": "Pieza",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Permuta"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "rotar_cubiertasArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "rotar_cubiertasDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "reemplazar_cubierta",
+      "description": "Retira al destino indicado y monta desde depósito en una transacción.",
+      "inputSchema": {
+        "$defs": {
+          "Pieza": {
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "exclusiveMinimum": 0,
+                "title": "Id",
+                "type": "integer"
+              },
+              "version": {
+                "exclusiveMinimum": 0,
+                "title": "Version",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id",
+              "version"
+            ],
+            "title": "Pieza",
+            "type": "object"
+          },
+          "Reemplazo": {
+            "additionalProperties": false,
+            "properties": {
+              "saliente": {
+                "$ref": "#/$defs/Pieza"
+              },
+              "entrante": {
+                "$ref": "#/$defs/Pieza"
+              },
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "km": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Km"
+              },
+              "destino": {
+                "enum": [
+                  "deposito",
+                  "proveedor",
+                  "baja"
+                ],
+                "title": "Destino",
+                "type": "string"
+              },
+              "proveedor_id": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Proveedor Id"
+              },
+              "motivo": {
+                "maxLength": 500,
+                "minLength": 1,
+                "title": "Motivo",
+                "type": "string"
+              },
+              "documento": {
+                "default": "",
+                "maxLength": 120,
+                "title": "Documento",
+                "type": "string"
+              }
+            },
+            "required": [
+              "saliente",
+              "entrante",
+              "fecha",
+              "destino",
+              "motivo"
+            ],
+            "title": "Reemplazo",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Reemplazo"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "reemplazar_cubiertaArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "reemplazar_cubiertaDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cargar_csv_mantenimiento",
+      "description": "Previsualiza CSV de stock, km o enganches y aplica el lote con su hash confirmado.",
+      "inputSchema": {
+        "$defs": {
+          "Carga": {
+            "additionalProperties": false,
+            "properties": {
+              "tipo": {
+                "enum": [
+                  "stock",
+                  "km",
+                  "enganches"
+                ],
+                "title": "Tipo",
+                "type": "string"
+              },
+              "separador": {
+                "default": "punto_y_coma",
+                "enum": [
+                  "punto_y_coma",
+                  "tab"
+                ],
+                "title": "Separador",
+                "type": "string"
+              },
+              "contenido": {
+                "maxLength": 250000,
+                "minLength": 1,
+                "title": "Contenido",
+                "type": "string"
+              },
+              "aplicar": {
+                "default": false,
+                "title": "Aplicar",
+                "type": "boolean"
+              },
+              "hash_previsualizado": {
+                "anyOf": [
+                  {
+                    "pattern": "^[0-9a-f]{64}$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Hash Previsualizado"
+              }
+            },
+            "required": [
+              "tipo",
+              "contenido"
+            ],
+            "title": "Carga",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Carga"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "cargar_csv_mantenimientoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "cargar_csv_mantenimientoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "registrar_cobertura_semanal",
+      "description": "Define cobertura de fuente y nómina obligada de una semana de checklists.",
+      "inputSchema": {
+        "$defs": {
+          "Semana": {
+            "additionalProperties": false,
+            "properties": {
+              "lunes": {
+                "format": "date",
+                "title": "Lunes",
+                "type": "string"
+              },
+              "version": {
+                "minimum": 0,
+                "title": "Version",
+                "type": "integer"
+              },
+              "choferes_obligados": {
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 5000,
+                "title": "Choferes Obligados",
+                "type": "array"
+              },
+              "cobertura_completa": {
+                "title": "Cobertura Completa",
+                "type": "boolean"
+              },
+              "fuente": {
+                "maxLength": 300,
+                "minLength": 1,
+                "title": "Fuente",
+                "type": "string"
+              }
+            },
+            "required": [
+              "lunes",
+              "version",
+              "choferes_obligados",
+              "cobertura_completa",
+              "fuente"
+            ],
+            "title": "Semana",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Semana"
+          },
+          "clave_idempotencia": {
+            "pattern": "^[A-Za-z0-9_.:-]{8,120}$",
+            "title": "Clave Idempotencia",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "datos",
+          "clave_idempotencia"
+        ],
+        "title": "registrar_cobertura_semanalArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "registrar_cobertura_semanalDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "preparar_importacion_mantenimiento",
+      "description": "Abre o recupera una carga SQLite por tenant y SHA-256.",
+      "inputSchema": {
+        "$defs": {
+          "Source": {
+            "additionalProperties": false,
+            "properties": {
+              "nombre": {
+                "maxLength": 180,
+                "minLength": 1,
+                "title": "Nombre",
+                "type": "string"
+              },
+              "tamano": {
+                "exclusiveMinimum": 0,
+                "maximum": 134217728,
+                "title": "Tamano",
+                "type": "integer"
+              },
+              "sha256": {
+                "pattern": "^[0-9a-f]{64}$",
+                "title": "Sha256",
+                "type": "string"
+              }
+            },
+            "required": [
+              "nombre",
+              "tamano",
+              "sha256"
+            ],
+            "title": "Source",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "datos": {
+            "$ref": "#/$defs/Source"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "datos"
+        ],
+        "title": "preparar_importacion_mantenimientoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "preparar_importacion_mantenimientoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "cargar_fragmento_importacion_mantenimiento",
+      "description": "Carga un fragmento base64 en orden y devuelve el próximo índice.",
+      "inputSchema": {
+        "$defs": {
+          "Fragment": {
+            "additionalProperties": false,
+            "properties": {
+              "indice": {
+                "exclusiveMaximum": 256,
+                "minimum": 0,
+                "title": "Indice",
+                "type": "integer"
+              },
+              "sha256": {
+                "pattern": "^[0-9a-f]{64}$",
+                "title": "Sha256",
+                "type": "string"
+              },
+              "contenido_base64": {
+                "maxLength": 699052,
+                "minLength": 4,
+                "title": "Contenido Base64",
+                "type": "string"
+              }
+            },
+            "required": [
+              "indice",
+              "sha256",
+              "contenido_base64"
+            ],
+            "title": "Fragment",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "import_id": {
+            "pattern": "^[0-9a-f]{32}$",
+            "title": "Import Id",
+            "type": "string"
+          },
+          "datos": {
+            "$ref": "#/$defs/Fragment"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "import_id",
+          "datos"
+        ],
+        "title": "cargar_fragmento_importacion_mantenimientoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "cargar_fragmento_importacion_mantenimientoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "finalizar_carga_importacion_mantenimiento",
+      "description": "Verifica integridad, hash y versión del archivo recibido.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "import_id": {
+            "pattern": "^[0-9a-f]{32}$",
+            "title": "Import Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "import_id"
+        ],
+        "title": "finalizar_carga_importacion_mantenimientoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "finalizar_carga_importacion_mantenimientoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "consultar_importacion_mantenimiento",
+      "description": "Consulta el estado y los bytes recibidos para reanudar una carga.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "import_id": {
+            "pattern": "^[0-9a-f]{32}$",
+            "title": "Import Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "import_id"
+        ],
+        "title": "consultar_importacion_mantenimientoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "consultar_importacion_mantenimientoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "simular_importacion_mantenimiento",
+      "description": "Genera el plan y enumera fuentes pendientes sin aplicar efectos.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "import_id": {
+            "pattern": "^[0-9a-f]{32}$",
+            "title": "Import Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "import_id"
+        ],
+        "title": "simular_importacion_mantenimientoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "simular_importacion_mantenimientoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "listar_conflictos_importacion_mantenimiento",
+      "description": "Devuelve hasta 50 incidencias a partir del ordinal.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "import_id": {
+            "pattern": "^[0-9a-f]{32}$",
+            "title": "Import Id",
+            "type": "string"
+          },
+          "desde": {
+            "default": 0,
+            "title": "Desde",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "import_id"
+        ],
+        "title": "listar_conflictos_importacion_mantenimientoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "listar_conflictos_importacion_mantenimientoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "resolver_conflicto_importacion_mantenimiento",
+      "description": "Registra una decisión explícita y genera otra revisión.",
+      "inputSchema": {
+        "$defs": {
+          "Alta": {
+            "additionalProperties": false,
+            "properties": {
+              "precio": {
+                "anyOf": [
+                  {
+                    "maximum": 999999999.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Precio"
+              },
+              "mano_de_obra": {
+                "anyOf": [
+                  {
+                    "maximum": 999999999.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Mano De Obra"
+              },
+              "moneda_id": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Moneda Id"
+              },
+              "dot": {
+                "anyOf": [
+                  {
+                    "maxLength": 40,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Dot"
+              },
+              "numero": {
+                "default": "",
+                "maxLength": 80,
+                "title": "Numero",
+                "type": "string"
+              },
+              "marca": {
+                "maxLength": 80,
+                "title": "Marca",
+                "type": "string"
+              },
+              "rodado": {
+                "maxLength": 80,
+                "title": "Rodado",
+                "type": "string"
+              },
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "banda": {
+                "anyOf": [
+                  {
+                    "maximum": 100,
+                    "minimum": 0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Banda"
+              },
+              "recapados": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Recapados"
+              }
+            },
+            "required": [
+              "marca",
+              "rodado",
+              "fecha"
+            ],
+            "title": "Alta",
+            "type": "object"
+          },
+          "CostoHistorico": {
+            "additionalProperties": false,
+            "properties": {
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "importe": {
+                "anyOf": [
+                  {
+                    "minimum": 0.0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "title": "Importe"
+              },
+              "moneda_id": {
+                "exclusiveMinimum": 0,
+                "title": "Moneda Id",
+                "type": "integer"
+              },
+              "documento": {
+                "maxLength": 160,
+                "minLength": 1,
+                "title": "Documento",
+                "type": "string"
+              }
+            },
+            "required": [
+              "fecha",
+              "importe",
+              "moneda_id",
+              "documento"
+            ],
+            "title": "CostoHistorico",
+            "type": "object"
+          },
+          "Decision": {
+            "additionalProperties": false,
+            "properties": {
+              "revision": {
+                "exclusiveMinimum": 0,
+                "title": "Revision",
+                "type": "integer"
+              },
+              "ordinal": {
+                "exclusiveMinimum": 0,
+                "title": "Ordinal",
+                "type": "integer"
+              },
+              "accion": {
+                "enum": [
+                  "evidencia",
+                  "vincular_equipo",
+                  "vincular_cubierta",
+                  "ingresar_stock",
+                  "crear_vigente",
+                  "vincular_fila",
+                  "costo_historico",
+                  "misma_partida"
+                ],
+                "title": "Accion",
+                "type": "string"
+              },
+              "fila_canonica": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Fila Canonica"
+              },
+              "costo": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/CostoHistorico"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "hecho": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/HechoHistorico"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "ubicacion": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "montada",
+                      "proveedor",
+                      "baja"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Ubicacion"
+              },
+              "equipo_id": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Equipo Id"
+              },
+              "posicion": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Posicion"
+              },
+              "proveedor_id": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Proveedor Id"
+              },
+              "km_montaje": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Km Montaje"
+              },
+              "motivo": {
+                "maxLength": 500,
+                "minLength": 1,
+                "title": "Motivo",
+                "type": "string"
+              },
+              "destino_id": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Destino Id"
+              },
+              "alta": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Alta"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "revision",
+              "ordinal",
+              "accion",
+              "motivo"
+            ],
+            "title": "Decision",
+            "type": "object"
+          },
+          "HechoHistorico": {
+            "additionalProperties": false,
+            "properties": {
+              "fecha": {
+                "format": "date",
+                "title": "Fecha",
+                "type": "string"
+              },
+              "tipo": {
+                "enum": [
+                  "montaje",
+                  "retiro",
+                  "rotacion",
+                  "medicion",
+                  "recapado",
+                  "servicio",
+                  "reparacion",
+                  "baja",
+                  "inventario",
+                  "acople",
+                  "otro"
+                ],
+                "title": "Tipo",
+                "type": "string"
+              },
+              "descripcion": {
+                "maxLength": 500,
+                "minLength": 1,
+                "title": "Descripcion",
+                "type": "string"
+              },
+              "documento": {
+                "anyOf": [
+                  {
+                    "maxLength": 160,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Documento"
+              }
+            },
+            "required": [
+              "fecha",
+              "tipo",
+              "descripcion"
+            ],
+            "title": "HechoHistorico",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "import_id": {
+            "pattern": "^[0-9a-f]{32}$",
+            "title": "Import Id",
+            "type": "string"
+          },
+          "datos": {
+            "$ref": "#/$defs/Decision"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "import_id",
+          "datos"
+        ],
+        "title": "resolver_conflicto_importacion_mantenimientoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "resolver_conflicto_importacion_mantenimientoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "aplicar_importacion_mantenimiento",
+      "description": "Aplica hasta 100 decisiones del plan indicado desde su checkpoint. Repetir con el nuevo checkpoint para continuar.",
+      "inputSchema": {
+        "$defs": {
+          "ApplyPlan": {
+            "additionalProperties": false,
+            "properties": {
+              "revision": {
+                "exclusiveMinimum": 0,
+                "title": "Revision",
+                "type": "integer"
+              },
+              "plan_hash": {
+                "pattern": "^[a-f0-9]{64}$",
+                "title": "Plan Hash",
+                "type": "string"
+              },
+              "checkpoint": {
+                "minimum": 0,
+                "title": "Checkpoint",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "revision",
+              "plan_hash",
+              "checkpoint"
+            ],
+            "title": "ApplyPlan",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "import_id": {
+            "pattern": "^[0-9a-f]{32}$",
+            "title": "Import Id",
+            "type": "string"
+          },
+          "datos": {
+            "$ref": "#/$defs/ApplyPlan"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "import_id",
+          "datos"
+        ],
+        "title": "aplicar_importacion_mantenimientoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "aplicar_importacion_mantenimientoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "pausar_importacion_mantenimiento",
+      "description": "Pausa entre lotes.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "import_id": {
+            "pattern": "^[0-9a-f]{32}$",
+            "title": "Import Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "import_id"
+        ],
+        "title": "pausar_importacion_mantenimientoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "pausar_importacion_mantenimientoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "reanudar_importacion_mantenimiento",
+      "description": "Habilita la continuación desde el checkpoint.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "import_id": {
+            "pattern": "^[0-9a-f]{32}$",
+            "title": "Import Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "import_id"
+        ],
+        "title": "reanudar_importacion_mantenimientoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "reanudar_importacion_mantenimientoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "ficha_equipo_mantenimiento",
+      "description": "Consulta preventivos, urea, acople y odómetro de una unidad a la fecha indicada.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "ident": {
+            "exclusiveMinimum": 0,
+            "title": "Ident",
+            "type": "integer"
+          },
+          "corte": {
+            "format": "date",
+            "title": "Corte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "ident",
+          "corte"
+        ],
+        "title": "ficha_equipo_mantenimientoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "ficha_equipo_mantenimientoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "consultar_orden_taller",
+      "description": "Consulta la OT, reservas y solicitudes de compra relacionadas.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "ident": {
+            "exclusiveMinimum": 0,
+            "title": "Ident",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "ident"
+        ],
+        "title": "consultar_orden_tallerArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "consultar_orden_tallerDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "capacidades_telematicas",
+      "description": "Consulta recursos contratados, soporte y presencia de datos para un VIN.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "vin": {
+            "anyOf": [
+              {
+                "pattern": "^[A-HJ-NPR-Z0-9]{17}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Vin"
+          }
+        },
+        "required": [
+          "tenant_id"
+        ],
+        "title": "capacidades_telematicasArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "capacidades_telematicasDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "mensajes_telematicos",
+      "description": "Página de mensajes permitidos con medidas normalizadas y campos adicionales del contrato.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "proveedor": {
+            "enum": [
+              "scania",
+              "volvo",
+              "fleetboard"
+            ],
+            "title": "Proveedor",
+            "type": "string"
+          },
+          "recurso": {
+            "pattern": "^[A-Za-z][A-Za-z0-9_]{0,79}$",
+            "title": "Recurso",
+            "type": "string"
+          },
+          "desde": {
+            "default": 0,
+            "title": "Desde",
+            "type": "integer"
+          },
+          "vin": {
+            "anyOf": [
+              {
+                "pattern": "^[A-HJ-NPR-Z0-9]{17}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Vin"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "proveedor",
+          "recurso"
+        ],
+        "title": "mensajes_telematicosArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "mensajes_telematicosDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "revertir_importacion_mantenimiento",
+      "description": "Evalúa dependencias y revierte altas en depósito con confirmación y motivo.",
+      "inputSchema": {
+        "$defs": {
+          "Reverse": {
+            "additionalProperties": false,
+            "properties": {
+              "revision": {
+                "exclusiveMinimum": 0,
+                "title": "Revision",
+                "type": "integer"
+              },
+              "confirmar": {
+                "default": false,
+                "title": "Confirmar",
+                "type": "boolean"
+              },
+              "motivo": {
+                "maxLength": 500,
+                "minLength": 1,
+                "title": "Motivo",
+                "type": "string"
+              }
+            },
+            "required": [
+              "revision",
+              "motivo"
+            ],
+            "title": "Reverse",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "import_id": {
+            "pattern": "^[0-9a-f]{32}$",
+            "title": "Import Id",
+            "type": "string"
+          },
+          "datos": {
+            "$ref": "#/$defs/Reverse"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "import_id",
+          "datos"
+        ],
+        "title": "revertir_importacion_mantenimientoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "revertir_importacion_mantenimientoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "_meta": {
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "paso.read",
+              "paso.write",
+              "paso.admin"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "kilometros_por_montaje_y_acople",
+      "description": "Asigna distancia medida a cubiertas y semirremolques según sus períodos comprobados.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "proveedor": {
+            "enum": [
+              "scania",
+              "volvo",
+              "fleetboard"
+            ],
+            "title": "Proveedor",
+            "type": "string"
+          },
+          "vin": {
+            "pattern": "^[A-HJ-NPR-Z0-9]{17}$",
+            "title": "Vin",
+            "type": "string"
+          },
+          "desde": {
+            "format": "date-time",
+            "title": "Desde",
+            "type": "string"
+          },
+          "hasta": {
+            "format": "date-time",
+            "title": "Hasta",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "proveedor",
+          "vin",
+          "desde",
+          "hasta"
+        ],
+        "title": "kilometros_por_montaje_y_acopleArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "kilometros_por_montaje_y_acopleDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "informe_mantenimiento",
+      "description": "Consulta movimientos, stock, bajas, proveedores, costos y alertas filtrados por fecha, marca y equipo.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "tipo": {
+            "enum": [
+              "movimientos",
+              "stock",
+              "alertas",
+              "proveedores",
+              "bajas",
+              "costos"
+            ],
+            "title": "Tipo",
+            "type": "string"
+          },
+          "corte": {
+            "format": "date",
+            "title": "Corte",
+            "type": "string"
+          },
+          "marca": {
+            "default": "",
+            "title": "Marca",
+            "type": "string"
+          },
+          "equipo_id": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Equipo Id"
+          },
+          "cursor": {
+            "default": 0,
+            "title": "Cursor",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "tipo",
+          "corte"
+        ],
+        "title": "informe_mantenimientoArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "informe_mantenimientoDictOutput",
+        "type": "object"
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "cumplimiento_checklists",
+      "description": "Consulta documentos y semanas cumplidas por chofer, con denominadores y semanas sin evidencia.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "exclusiveMinimum": 0,
+            "title": "Tenant Id",
+            "type": "integer"
+          },
+          "desde": {
+            "format": "date",
+            "title": "Desde",
+            "type": "string"
+          },
+          "hasta": {
+            "format": "date",
+            "title": "Hasta",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "desde",
+          "hasta"
+        ],
+        "title": "cumplimiento_checklistsArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "cumplimiento_checklistsDictOutput",
         "type": "object"
       },
       "annotations": {

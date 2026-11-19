@@ -7,7 +7,7 @@ Documentación pública del servidor MCP de **PASO — Plataforma de Administrac
 - Transporte: Streamable HTTP
 - Catálogo: [`tools.json`](tools.json)
 
-PASO ofrece 27 herramientas para agentes externos. No incluye actualmente un agente propio. La conexión usa un token Bearer personal en clientes compatibles con encabezados; OAuth guiado para ChatGPT y Claude continúa en desarrollo.
+El catálogo contiene 89 herramientas. PASO admite tokens personales y autorización OAuth con PKCE. El cliente descubre el recurso protegido en `https://mcp.paso.sys.ar/.well-known/oauth-protected-resource`. La autorización ofrece los alcances solicitados por el cliente y permitidos a la cuenta: `paso.read`, `paso.write` y `paso.admin`. Para administrar desde un asistente, el cliente debe solicitar el alcance administrativo y la persona debe autorizarlo para los tenants correspondientes. Verificá el alcance efectivo con `mi_cuenta`.
 
 ## Configuración de referencia
 
@@ -28,6 +28,8 @@ PASO ofrece 27 herramientas para agentes externos. No incluye actualmente un age
 El formato exacto depende del cliente. Nunca coloques el token en la URL ni lo publiques en archivos versionados.
 
 ## Guías
+
+- [Usuarios, permisos y disponibilidad de flota](docs/roles-invitaciones-flota.md)
 
 - [Conexión](docs/conexion.md)
 - [Tenants y permisos](docs/permisos.md)
